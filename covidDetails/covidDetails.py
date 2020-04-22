@@ -6,12 +6,14 @@ from geopy.geocoders import Bing
 import requests
 from requests.utils import requote_uri
 import re
+
 import urllib
 
 class covidDetails:
 
     def __init__(self):
         self.baseUrl = "https://endapicovid.azurewebsites.net"
+        #self.baseUrl = "http://localhost:8010"
         self.countryUrl = "/totalcasesbycountry?country=#country&type=#type"
         self.pincodeUrl = "/getCovidDetailsByPincode?pincode=#pincode"
         self.topCountyDetailsUrl = "/gettopcountrydetails?entity=#entity&sortType=#sortType&type=#type"
@@ -191,4 +193,6 @@ class covidDetails:
                     }
                 ]
             }
+
+
 

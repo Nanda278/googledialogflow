@@ -1,5 +1,6 @@
 from datetime import datetime
 from pymongo import MongoClient
+import pandas as pd
 import os
 
 def connectMongodb(mongohost, mongoPort, mongoDbName=None):
@@ -37,10 +38,24 @@ class Log:
         self.now = datetime.now()
         self.date = self.now.date()
         self.current_time = self.now.strftime("%H:%M:%S")
-        dataBase =  self.mongoClient['rasaBot']
+        dataBase = self.mongoClient['dialogflow']
         dictValues={}
         dictValues['timeStamp'] = str(self.date) + "/" + str(self.current_time)
         dictValues['message'] = log_message
 
-        dataBase[sessionID].insert(dictValues)
+        dataBase[sessionID].insert(dictValues,{"ordered" : "true"})
         print(log_message," inserted successfully")
+
+    def write_name_todb(self, sessionid,field ,entity):
+        dataBase = self.mongoClient['dialogflow']
+        dictValue={}
+        dictValue[field]=entity
+        dataBase[sessionid].insert(dictValue, {"ordered" :"true"})
+
+    def getField(self, sessionid, field):
+        database = self.mongoClient['dialogflow']
+        myquery = {field : {"$exists": True}}
+        name = database[sessionid].find(myquery)
+        df = pd.DataFrame(list(name)).tail(1)
+        name = str(df[field].values[0]) if(len(df)>0) else ""
+        return name
